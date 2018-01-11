@@ -18,10 +18,12 @@ public class OI {
 	
 	public Joystick stickleft = new Joystick(0);
 	
-	Button buttonA = new JoystickButton(stickleft, 0);
+	Button buttonA = new JoystickButton(stickleft, 1);
 	
 	public OI() {
 		
 		buttonA.whenPressed(new MoteurCommand());
+		
+		
 	}
 }

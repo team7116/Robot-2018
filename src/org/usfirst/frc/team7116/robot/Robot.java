@@ -24,8 +24,8 @@ import org.usfirst.frc.team7116.robot.subsystems.MoteurSimple;
  * project.
  */
 public class Robot extends TimedRobot {
-	public static final DriveTrain driveTrain
-			= new DriveTrain();
+//	public static final DriveTrain driveTrain
+//			= new DriveTrain();
 	public static OI m_oi;
 	public static final MoteurSimple moteur = new MoteurSimple();
 
