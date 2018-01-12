@@ -54,7 +54,7 @@ public class DriveTrain extends Subsystem {
 		super();
 		wheelLeft = new WPI_TalonSRX(RobotMap.TalonGauche);
 		wheelRight = new WPI_TalonSRX(RobotMap.TalonDroite);
-		
+	
 		drive = new DifferentialDrive(wheelLeft, wheelRight);
 	}
 	
