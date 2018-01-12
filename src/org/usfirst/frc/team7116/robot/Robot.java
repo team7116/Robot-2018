@@ -8,6 +8,7 @@
 package org.usfirst.frc.team7116.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -114,12 +115,21 @@ public class Robot extends TimedRobot {
 		System.out.println("Teleop init");
 	}
 
+	double cT = Timer.getFPGATimestamp();
+	public static double dT = 0;
+	double pT = cT;
+	
 	/**
 	 * This function is called periodically during operator control.
 	 */
 	@Override
 	public void teleopPeriodic() {
+		cT = Timer.getFPGATimestamp();
+		dT = cT - pT;
+		pT = cT;
+		
 		Scheduler.getInstance().run();
+		
 	}
 
 	/**

@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team7116.robot.subsystems;
 
+import org.usfirst.frc.team7116.robot.Robot;
 import org.usfirst.frc.team7116.robot.RobotMap;
 import org.usfirst.frc.team7116.robot.commands.DriveWithJoystick;
 
@@ -17,6 +18,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
@@ -27,12 +29,11 @@ public class DriveTrain extends Subsystem {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 
-	public WPI_TalonSRX roueGauche;
-	public TalonSRX roueDroite;
+	public WPI_TalonSRX wheelLeft;
+	public WPI_TalonSRX wheelRight;
+	
 	public DifferentialDrive drive;
-	
-	SpeedControllerGroup talonGauche, talonDroite;
-	
+
 	/**
 	 * Distance entre le centre la roue du centre
 
@@ -46,29 +47,35 @@ public class DriveTrain extends Subsystem {
 	
 	public void initDefaultCommand() {
 		// Set the default command for a subsystem here.
-		//setDefaultCommand(new DriveWithJoystick());
+		setDefaultCommand(new DriveWithJoystick());
 	}
 	
 	public DriveTrain() {
 		super();
-		roueGauche = new WPI_TalonSRX(RobotMap.TalonGauche);
-		roueDroite = new TalonSRX(RobotMap.TalonDroite);
+		wheelLeft = new WPI_TalonSRX(RobotMap.TalonGauche);
+		wheelRight = new WPI_TalonSRX(RobotMap.TalonDroite);
 		
-//		talonGauche = new SpeedControllerGroup(talonGauche, talonGauche);
-//		talonDroite = new SpeedControllerGroup(talonDroite, talonDroite);
-		
-		//drive = new DifferentialDrive(talonGauche, talonDroite);
+		drive = new DifferentialDrive(wheelLeft, wheelRight);
 	}
 	
+
+	double msgAcc = 0;
+	double msgInt = 250;
+	
 	public void drive(Joystick stick){
-//		roueGauche.
-//		roueGauche.set(ControlMode.Velocity, 0.5);
 		
-		//drive.arcadeDrive(stick.getY(), stick.getX());
+		msgAcc += Robot.dT;
 		
+		drive.arcadeDrive(stick.getY(), stick.getX());
+		
+		if (msgAcc >= msgInt) {
+			msgAcc = 0;
+			
+			System.out.println("DriveTrain.drive");
+		}
 	}
 	
 	public void stop() {
-		//drive.stopMotor();
+		drive.stopMotor();
 	}
 }
