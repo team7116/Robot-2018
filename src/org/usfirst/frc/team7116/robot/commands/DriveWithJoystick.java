@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class DriveWithJoystick extends Command {
 	public DriveWithJoystick() {
 		
-		//requires(Robot.driveTrain);
+		requires(Robot.driveTrain);
 	}
 	
 	protected void initialize() {
@@ -25,7 +25,7 @@ public class DriveWithJoystick extends Command {
 	@Override
 	protected void execute() {
 		
-		//Robot.driveTrain.drive(Robot.m_oi.stickleft);
+		Robot.driveTrain.drive(Robot.m_oi.stickleft);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
@@ -37,7 +37,7 @@ public class DriveWithJoystick extends Command {
 	// Called once after isFinished returns true
 	@Override
 	protected void end() {
-		//Robot.driveTrain.stop();
+	  Robot.driveTrain.stop();	
 	}
 
 	// Called when another command which requires one or more of the same

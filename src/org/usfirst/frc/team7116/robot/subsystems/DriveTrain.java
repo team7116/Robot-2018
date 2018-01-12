@@ -8,10 +8,14 @@
 package org.usfirst.frc.team7116.robot.subsystems;
 
 import org.usfirst.frc.team7116.robot.RobotMap;
+import org.usfirst.frc.team7116.robot.commands.DriveWithJoystick;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -23,11 +27,11 @@ public class DriveTrain extends Subsystem {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 
-	public TalonSRX roueGauche;
+	public WPI_TalonSRX roueGauche;
 	public TalonSRX roueDroite;
 	public DifferentialDrive drive;
 	
-	SpeedControllerGroup TalonGauche, TalonDroite;
+	SpeedControllerGroup talonGauche, talonDroite;
 	
 	/**
 	 * Distance entre le centre la roue du centre
@@ -42,24 +46,29 @@ public class DriveTrain extends Subsystem {
 	
 	public void initDefaultCommand() {
 		// Set the default command for a subsystem here.
-		// setDefaultCommand(new MySpecialCommand());
+		//setDefaultCommand(new DriveWithJoystick());
 	}
 	
 	public DriveTrain() {
 		super();
-		roueGauche = new TalonSRX(RobotMap.TalonGauche);
+		roueGauche = new WPI_TalonSRX(RobotMap.TalonGauche);
 		roueDroite = new TalonSRX(RobotMap.TalonDroite);
-
-		drive = new DifferentialDrive(TalonGauche, TalonDroite);
+		
+//		talonGauche = new SpeedControllerGroup(talonGauche, talonGauche);
+//		talonDroite = new SpeedControllerGroup(talonDroite, talonDroite);
+		
+		//drive = new DifferentialDrive(talonGauche, talonDroite);
 	}
 	
 	public void drive(Joystick stick){
+//		roueGauche.
+//		roueGauche.set(ControlMode.Velocity, 0.5);
 		
-		drive.arcadeDrive(stick.getY(), stick.getX());
+		//drive.arcadeDrive(stick.getY(), stick.getX());
 		
 	}
 	
 	public void stop() {
-		drive.stopMotor();
+		//drive.stopMotor();
 	}
 }

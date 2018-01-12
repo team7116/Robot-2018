@@ -18,5 +18,12 @@ public class RobotMap {
 	public static int TalonGauche = 10;
 	public static int TalonDroite = 12;
 	
+	public static int SolenoidOuverture = 0;// ouverture pince
+	public static int SolenoidFermeture = 1;// fermeture pince
+	
+	public static int SolenoidBaisserPince = 2;// baisser pince
+	public static int SolenoidLeverPince = 3; // lever pince
+	
+	public static int pcmAdr = 20;
 	
 }

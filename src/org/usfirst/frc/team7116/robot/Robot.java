@@ -10,11 +10,13 @@ package org.usfirst.frc.team7116.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team7116.robot.commands.DriveWithJoystick;
 import org.usfirst.frc.team7116.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team7116.robot.subsystems.MoteurSimple;
+import org.usfirst.frc.team7116.robot.subsystems.Pince;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,10 +26,14 @@ import org.usfirst.frc.team7116.robot.subsystems.MoteurSimple;
  * project.
  */
 public class Robot extends TimedRobot {
-//	public static final DriveTrain driveTrain
-//			= new DriveTrain();
+	//public static final DriveTrain driveTrain = new DriveTrain();
+	
+	
 	public static OI m_oi;
+	public static final DriveTrain driveTrain = new DriveTrain();
 	public static final MoteurSimple moteur = new MoteurSimple();
+	public static final Pince pince = new Pince();
+	
 
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -104,6 +110,8 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
+		
+		System.out.println("Teleop init");
 	}
 
 	/**
