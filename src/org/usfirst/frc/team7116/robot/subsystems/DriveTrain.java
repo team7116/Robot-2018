@@ -43,6 +43,9 @@ public class DriveTrain extends Subsystem {
 	private double diametreRoues = 15.24;
 	private double positionInDistance = 47.87787204070844895417068516118;
 	private double circonferenceRoues = 47.87787;
+	
+	public double XFactor = 0.6;
+	public double XThreshold = 1;
 
 	
 	public void initDefaultCommand() {
@@ -62,11 +65,28 @@ public class DriveTrain extends Subsystem {
 	double msgAcc = 0;
 	double msgInt = 250;
 	
+	public double remapx(double X){
+		
+		if(Math.abs(X) >= XThreshold) {
+			if(X > 0) {
+				X = 1;
+			}else {
+				X = -1;
+			}
+		}else {
+			X *= XFactor;
+		}
+		
+		return X;
+		
+	}
+		
+	
 	public void drive(Joystick stick){
 		
 		msgAcc += Robot.dT;
 		
-		drive.arcadeDrive(stick.getY(), stick.getX());
+		drive.arcadeDrive(-stick.getY(), remapx(stick.getX()));
 		
 		if (msgAcc >= msgInt) {
 			msgAcc = 0;
