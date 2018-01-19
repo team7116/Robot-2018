@@ -22,7 +22,8 @@ public class OI {
 	
 	public Joystick stickleft = new Joystick(0);
 	
-	Button buttonX = new JoystickButton(stickleft, 3); // X - POUR TEST MOTEUR SIMPLE
+	Button buttonX = new JoystickButton(stickleft, 3); // X - Lever bras grappin
+	Button buttonY = new JoystickButton(stickleft, 4); //Y - Baisser bras grappin
 	Button buttonLB = new JoystickButton(stickleft, 5); // Left button pour ouvrir pince
 	Button buttonRB = new JoystickButton(stickleft, 6); // Right button pour fermer pince
 	Button buttonA = new JoystickButton(stickleft, 1); // A - BAISSER bras de pince
@@ -36,8 +37,9 @@ public class OI {
 	public OI() {
 		
 		
-		//Commande TEST pour activer un moteur avec boutton X
+		//Commande pour baisser et lever le bras du grappin (ports 3 et 4)
 		buttonX.whileHeld(new MoteurCommand());
+		buttonY.whileHeld(new MoteurCommand());
 			
 		//Commandes pour ouvrir et fermer la pince pneumatique (ports 1 et 2)
 		buttonLB.whenPressed(new PinceOuvrir());

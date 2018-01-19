@@ -4,37 +4,41 @@ import org.usfirst.frc.team7116.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- *
- */
+
 public class MoteurCommand extends Command {
 
+	static double vitesse = 0.5;
+	
     public MoteurCommand() {
          requires(Robot.moteur);
+         
     }
 
-    // Called just before this Command runs the first time
     protected void initialize() {
     	System.out.println("MoteurCommand : Init");
-    	Robot.moteur.setVitesse(0.5);
+    	//Robot.m_oi.stickleft.getRawButton();
+    	Robot.moteur.setVitesse(vitesse);
     }
     	
-    // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    }
     	
-    // Make this return true when this Command no longer needs to run execute()
+    }
+    
     protected boolean isFinished() {
+    	
+    	if(Robot.moteur.switchA() && vitesse>0 || Robot.moteur.switchB() && vitesse<0) {
+    		vitesse=-vitesse;
+    		System.out.println("Limite atteinte");
+    		return true;
+    	}
+    	
         return false;
     }
 
-    // Called once after isFinished returns true
     protected void end() {
     	Robot.moteur.stop();
     }
 
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
     protected void interrupted() {
     	end();
     }
