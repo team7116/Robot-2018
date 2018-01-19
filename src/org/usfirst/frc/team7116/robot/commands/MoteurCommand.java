@@ -17,6 +17,7 @@ public class MoteurCommand extends Command {
     protected void initialize() {
     	System.out.println("MoteurCommand : Init");
     	//Robot.m_oi.stickleft.getRawButton();
+    	
     	Robot.moteur.setVitesse(vitesse);
     }
     	
