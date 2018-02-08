@@ -8,7 +8,7 @@
 package org.usfirst.frc.team7116.robot;
 
 import org.usfirst.frc.team7116.robot.commands.DriveWithJoystick;
-import org.usfirst.frc.team7116.robot.commands.MoteurCommand;
+import org.usfirst.frc.team7116.robot.commands.LeverBaisserGrappin;
 import org.usfirst.frc.team7116.robot.commands.PinceBaisser;
 import org.usfirst.frc.team7116.robot.commands.PinceFermer;
 import org.usfirst.frc.team7116.robot.commands.PinceLever;
@@ -38,8 +38,8 @@ public class OI {
 		
 		
 		//Commande pour baisser et lever le bras du grappin (ports 3 et 4)
-		buttonX.whileHeld(new MoteurCommand());
-		buttonY.whileHeld(new MoteurCommand());
+		buttonX.whileHeld(new LeverBaisserGrappin());
+		buttonY.whileHeld(new LeverBaisserGrappin());
 			
 		//Commandes pour ouvrir et fermer la pince pneumatique (ports 1 et 2)
 		buttonLB.whenPressed(new PinceOuvrir());

@@ -5,18 +5,26 @@ import org.usfirst.frc.team7116.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 
-public class MoteurCommand extends Command {
+public class LeverBaisserGrappin extends Command {
 
 	static double vitesse = 0.5;
 	
-    public MoteurCommand() {
+    public LeverBaisserGrappin() {
          requires(Robot.moteur);
          
     }
 
     protected void initialize() {
     	System.out.println("MoteurCommand : Init");
-    	//Robot.m_oi.stickleft.getRawButton();
+    	
+    	if(Robot.m_oi.stickleft.getRawButton(3))
+    	{
+    		vitesse= 0.5;  
+    	}
+    	else
+    	{
+    		vitesse=-0.5;
+    	}
     	
     	Robot.moteur.setVitesse(vitesse);
     }
