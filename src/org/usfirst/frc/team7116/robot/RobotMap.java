@@ -26,6 +26,7 @@ public class RobotMap {
 	
 	public static int pcmAdr = 20;
 	
-	public static int ServoPan = 10 ;
+	public static int ServoPan = 0;
+	public static int ServoTilt = 1;
 	
 }
