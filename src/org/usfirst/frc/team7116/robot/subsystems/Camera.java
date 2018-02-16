@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class Camera extends Subsystem {
 
+	
     Servo pan;
     Servo tilt;
 
