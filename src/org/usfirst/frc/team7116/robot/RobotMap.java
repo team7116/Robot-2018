@@ -29,4 +29,6 @@ public class RobotMap {
 	public static int ServoPan = 0;
 	public static int ServoTilt = 1;
 	
+	public static final int kTimeoutMs = 10;
+	
 }

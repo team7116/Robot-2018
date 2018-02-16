@@ -18,6 +18,8 @@ import org.usfirst.frc.team7116.robot.commands.DriveWithJoystick;
 import org.usfirst.frc.team7116.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team7116.robot.subsystems.MoteurSimple;
 import org.usfirst.frc.team7116.robot.subsystems.Pince;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 
 
@@ -95,6 +97,18 @@ public class Robot extends TimedRobot {
 		 * = new MyAutoCommand(); break; case "Default Auto": default:
 		 * autonomousCommand = new ExampleCommand(); break; }
 		 */
+		
+		// Code permettant de recuperer les switchs pour le mode autonome.
+		String gameData;
+		gameData = DriverStation.getInstance().getGameSpecificMessage();
+
+		if (gameData.length() > 0) {
+			if (gameData.charAt(0) == 'L') {
+				// Put left auto code here
+			} else {
+				// Put right auto code here
+			}
+		}
 
 		// schedule the autonomous command (example)
 		if (m_autonomousCommand != null) {
