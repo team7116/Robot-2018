@@ -19,6 +19,7 @@ import org.usfirst.frc.team7116.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team7116.robot.subsystems.MoteurSimple;
 import org.usfirst.frc.team7116.robot.subsystems.Pince;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 
@@ -43,6 +44,8 @@ public class Robot extends TimedRobot {
 	
 	I2C i2c;
 
+	Compressor c = new Compressor(0);
+	
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -52,6 +55,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
+		c.setClosedLoopControl(true);
+		
 		m_oi = new OI();
 		m_chooser.addDefault("Default Auto", new DriveWithJoystick());
 		// chooser.addObject("My Auto", new MyAutoCommand());

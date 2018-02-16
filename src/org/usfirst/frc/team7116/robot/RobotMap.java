@@ -24,7 +24,7 @@ public class RobotMap {
 	public static int SolenoidBaisserPince = 2;// baisser pince
 	public static int SolenoidLeverPince = 3; // lever pince
 	
-	public static int pcmAdr = 20;
+	public static int pcmAdr = 0;
 	
 	public static int ServoPan = 0;
 	public static int ServoTilt = 1;
