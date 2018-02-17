@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
 		
-
+		driveTrain.resetEncoders();
 	}
 
 	/**
@@ -104,6 +104,8 @@ public class Robot extends TimedRobot {
 		 */
 		
 		// Code permettant de recuperer les switchs pour le mode autonome.
+		driveTrain.resetEncoders();
+		
 		String gameData;
 		gameData = DriverStation.getInstance().getGameSpecificMessage();
 
@@ -138,6 +140,8 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
+		
+		driveTrain.resetEncoders();
 		
 		System.out.println("Teleop init");
 	}

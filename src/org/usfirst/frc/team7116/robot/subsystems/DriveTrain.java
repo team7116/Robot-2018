@@ -19,8 +19,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
@@ -40,7 +43,7 @@ public class DriveTrain extends Subsystem {
 	public Encoder encoderRight;
 	
 	
-	private final double TICK_PER_CM = 85.55;
+	private final double TICK_PER_CM = 42.75;
 
 	/**
 	 * Distance entre le centre la roue du centre
@@ -67,7 +70,6 @@ public class DriveTrain extends Subsystem {
 		super();
 		wheelLeft = new WPI_TalonSRX(RobotMap.TalonGauche);
 		wheelRight = new WPI_TalonSRX(RobotMap.TalonDroite);
-		
 	
 		drive = new DifferentialDrive(wheelLeft, wheelRight);
 		
@@ -78,6 +80,9 @@ public class DriveTrain extends Subsystem {
 		// Inversion des encodeurs
 		wheelLeft.setSensorPhase(false);
 		wheelRight.setSensorPhase(true);
+		
+		resetEncoders();
+
 		
 		wheelLeft.setSafetyEnabled(false);
 		wheelRight.setSafetyEnabled(false);
@@ -107,11 +112,12 @@ public class DriveTrain extends Subsystem {
 	}
 		
 	
-	public void drive(Joystick stick){
+	public void drive(XboxController stick){
 		
 		msgAcc += Robot.dT;
 		
-		drive.arcadeDrive(-stick.getY(), remapx(stick.getX()));
+		drive.arcadeDrive(-stick.getY(Hand.kLeft), remapx(stick.getX(Hand.kRight)));
+		
 		
 		if (msgAcc >= msgInt) {
 			msgAcc = 0;
@@ -132,5 +138,26 @@ public class DriveTrain extends Subsystem {
 	public void setPosition(double cmLeft, double cmRight) {
 		wheelLeft.set(ControlMode.Position, TICK_PER_CM * cmLeft);
 		wheelRight.set(ControlMode.Position, TICK_PER_CM * cmRight);
+	}
+	
+	public int getLeftWheelVelocity() {
+		return wheelLeft.getSensorCollection().getQuadratureVelocity();
+	}
+	
+	public int getRightWheelVelocity() {
+		return wheelRight.getSensorCollection().getQuadratureVelocity();
+	}
+	
+	public int getLeftWheelPosition() {
+		return wheelLeft.getSensorCollection().getQuadraturePosition();
+	}
+	
+	public int getRightWheelPosition() {
+		return -wheelRight.getSensorCollection().getQuadraturePosition();
+	}
+	
+	public void resetEncoders() {
+		wheelLeft.setSelectedSensorPosition(0, 0, RobotMap.kTimeoutMs);
+		wheelRight.setSelectedSensorPosition(0, 0, RobotMap.kTimeoutMs);
 	}
 }

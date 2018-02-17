@@ -3,6 +3,7 @@ package org.usfirst.frc.team7116.robot.commands;
 import org.usfirst.frc.team7116.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -16,6 +17,7 @@ public class PinceOuvrir extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.pince.ouvrir();
+    	SmartDashboard.putString("Grip state", "Grip opened");
     }
 
     // Called repeatedly when this Command is scheduled to run

@@ -15,12 +15,14 @@ import org.usfirst.frc.team7116.robot.commands.PinceLever;
 import org.usfirst.frc.team7116.robot.commands.PinceOuvrir;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 public class OI {
 	
-	public Joystick stickleft = new Joystick(0);
+	public XboxController stickleft = new XboxController(0);
+	 
 	
 	Button buttonX = new JoystickButton(stickleft, 3); // X - Lever bras grappin
 	Button buttonY = new JoystickButton(stickleft, 4); //Y - Baisser bras grappin
