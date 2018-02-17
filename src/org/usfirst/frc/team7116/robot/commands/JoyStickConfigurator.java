@@ -1,52 +1,47 @@
 package org.usfirst.frc.team7116.robot.commands;
 
+
 import org.usfirst.frc.team7116.robot.Robot;
+import org.usfirst.frc.team7116.robot.RobotMap;
+import org.usfirst.frc.team7116.robot.RobotMap.JoyConfig;
+import org.usfirst.frc.team7116.robot.subsystems.DriveTrain;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
  */
-public class PinceOuvrir extends Command {
+public class JoyStickConfigurator extends Command {
 
-    public PinceOuvrir() {
-        requires(Robot.pince);
-        this.delay = 0;
-    }
-    
-    public PinceOuvrir (double delay) {
-    	PinceOuvrir.delay = delay;
-    	requires(Robot.pince);
+    public JoyStickConfigurator() {
+        // Use requires() here to declare subsystem dependencies
+        requires(Robot.driveTrain);
+        
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.pince.ouvrir();
-    	SmartDashboard.putString("Grip state", "Grip opened");
+    	switch (DriveTrain.driveConfig) {
+    	case kTriggers:
+    		DriveTrain.driveConfig = JoyConfig.kleftStickOnly;
+    		break;
+    	case kleftStickOnly:
+    		DriveTrain.driveConfig = JoyConfig.kBothSticks;
+    		break;
+    	case kBothSticks:
+    		DriveTrain.driveConfig = JoyConfig.kTriggers;
+    		break;
+    	}
+
     }
 
-    static double delay = 0;
-    static double accumulator = 0;
-    boolean done = false;
-    
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-		accumulator += Robot.getDeltaTime();
-		
-		if (accumulator > delay) {
-			accumulator = 0;
-			Robot.pince.ouvrir();
-			
-			done = true;
-		}
-		
-		Robot.setMessage("Waiting to open (" + accumulator + ")");
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return done;
+        return false;
     }
 
     // Called once after isFinished returns true
