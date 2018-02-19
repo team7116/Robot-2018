@@ -31,4 +31,12 @@ public class RobotMap {
 	
 	public static final int kTimeoutMs = 10;
 	
+
+	public enum JoyConfig {
+	    kleftStickOnly, kTriggers, kBothSticks,
+	    
+
+  }
 }
+
+

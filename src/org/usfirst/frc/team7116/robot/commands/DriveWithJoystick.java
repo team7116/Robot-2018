@@ -32,6 +32,7 @@ public class DriveWithJoystick extends Command {
 		SmartDashboard.putNumber("RPM Right", Robot.driveTrain.getRightWheelVelocity());
 		SmartDashboard.putNumber("Position Left", Robot.driveTrain.getLeftWheelPosition());
 		SmartDashboard.putNumber("Position Right", Robot.driveTrain.getRightWheelPosition());
+		
 	}
 
 	// Make this return true when this Command no longer needs to run execute()

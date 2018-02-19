@@ -14,11 +14,17 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.VisionThread;
+import vision.Vision;
+
 import org.usfirst.frc.team7116.robot.commands.DriveWithJoystick;
 import org.usfirst.frc.team7116.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team7116.robot.subsystems.MoteurSimple;
 import org.usfirst.frc.team7116.robot.subsystems.Pince;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
@@ -41,13 +47,14 @@ public class Robot extends TimedRobot {
 	public static final DriveTrain driveTrain = new DriveTrain();
 	public static final MoteurSimple moteur = new MoteurSimple();
 	public static final Pince pince = new Pince();
-	
-	I2C i2c;
 
 	Compressor c = new Compressor(0);
 	
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
+	
+	Thread vision;
+
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -60,9 +67,15 @@ public class Robot extends TimedRobot {
 		m_oi = new OI();
 		m_chooser.addDefault("Default Auto", new DriveWithJoystick());
 		// chooser.addObject("My Auto", new MyAutoCommand());
-		SmartDashboard.putData("Auto mode", m_chooser);
-		
+		//SmartDashboard.putData("Auto mode", m_chooser);
+				
 		driveTrain.resetEncoders();
+		
+		vision = new Thread(new Vision());
+		
+		vision.start();
+
+	    
 	}
 
 	/**
@@ -143,7 +156,7 @@ public class Robot extends TimedRobot {
 		
 		driveTrain.resetEncoders();
 		
-		System.out.println("Teleop init");
+		setMessage("Teleop init");
 	}
 
 	double cT = Timer.getFPGATimestamp();
@@ -159,8 +172,16 @@ public class Robot extends TimedRobot {
 		dT = cT - pT;
 		pT = cT;
 		
+		SmartDashboard.putNumber("Time", cT);
+		SmartDashboard.putNumber("delta Time", dT);
+		
 		Scheduler.getInstance().run();
 		
+	}
+	
+	
+	public static double getDeltaTime() {
+		return dT;
 	}
 
 	/**
@@ -168,5 +189,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+	}
+	
+	public static void setMessage(String message) {
+		SmartDashboard.putString ("Message", message);
 	}
 }

@@ -14,19 +14,39 @@ public class PinceFermer extends Command {
         requires(Robot.pince);
     }
 
+    public PinceFermer (double delay) {
+    	requires(Robot.pince);
+    	this.delay = delay;
+    }
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.pince.fermer();
     	SmartDashboard.putString("Grip state", "Grip closed");
     }
 
+    double delay = 0;
+    double accumulator = 0;
+    boolean done = false;
+    
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	if (delay > 0) {
+    		accumulator += Robot.dT;
+    		
+    		if (accumulator > delay) {
+    			accumulator = 0;
+    			Robot.pince.fermer();
+    			
+    			done = true;
+    		}
+    		
+    		SmartDashboard.putString("Message", "Waiting to close (" + accumulator + ")");
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return done;
     }
 
     // Called once after isFinished returns true

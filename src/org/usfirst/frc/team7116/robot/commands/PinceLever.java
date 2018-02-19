@@ -12,19 +12,38 @@ public class PinceLever extends Command {
     public PinceLever() {
         requires(Robot.pince);
     }
+    
+    public PinceLever(double delay) {
+    	this.delay = delay;
+    	requires(Robot.pince);
+    }
 
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.pince.lever();
     }
 
+    double delay = 0;
+    double accumulator = 0;
+    boolean done = false;
+    
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	if (delay > 0) {
+    		accumulator += Robot.dT;
+    		
+    		if (accumulator > delay) {
+    			accumulator = 0;
+    			Robot.pince.lever();
+    			
+    			done = true;
+    		}
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return done;
     }
 
     // Called once after isFinished returns true

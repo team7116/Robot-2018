@@ -9,6 +9,7 @@ package org.usfirst.frc.team7116.robot.subsystems;
 
 import org.usfirst.frc.team7116.robot.Robot;
 import org.usfirst.frc.team7116.robot.RobotMap;
+import org.usfirst.frc.team7116.robot.RobotMap.JoyConfig;
 import org.usfirst.frc.team7116.robot.commands.DriveWithJoystick;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -19,6 +20,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -111,19 +113,58 @@ public class DriveTrain extends Subsystem {
 		
 	}
 		
+	public static JoyConfig driveConfig = RobotMap.JoyConfig.kTriggers;
 	
 	public void drive(XboxController stick){
 		
+		if (stick.getBackButtonReleased()) {
+			setJoystick();
+		}
+		
 		msgAcc += Robot.dT;
 		
-		drive.arcadeDrive(-stick.getY(Hand.kLeft), remapx(stick.getX(Hand.kRight)));
+		double yAxis = -stick.getTriggerAxis(Hand.kLeft)+ stick.getTriggerAxis(Hand.kRight);
+		double xAxis = remapx(stick.getX(Hand.kLeft));
+
+		switch(driveConfig){
+		case kTriggers:
+			yAxis = -stick.getTriggerAxis(Hand.kLeft)+ stick.getTriggerAxis(Hand.kRight);
+			SmartDashboard.putString("JoyStick Mode", "Triggers");
+			break;
+		case kleftStickOnly:
+			yAxis = -stick.getY(Hand.kLeft);
+			SmartDashboard.putString("JoyStick Mode", "Left Stick Only");
+			break;
+		case kBothSticks:
+			yAxis = -stick.getY(Hand.kLeft);
+			xAxis = remapx(stick.getX(Hand.kRight));
+			SmartDashboard.putString("JoyStick Mode", "Both Sticks");
+			break;
+		}
 		
+		drive.arcadeDrive(yAxis, xAxis);
 		
 		if (msgAcc >= msgInt) {
 			msgAcc = 0;
 			
 			System.out.println("DriveTrain.drive");
 		}
+	}
+	
+	public void setJoystick() {
+		
+		
+    	switch (driveConfig) {
+    	case kTriggers:
+    		driveConfig = JoyConfig.kleftStickOnly;
+    		break;
+    	case kleftStickOnly:
+    		driveConfig = JoyConfig.kBothSticks;
+    		break;
+    	case kBothSticks:
+    		driveConfig = JoyConfig.kTriggers;
+    		break;
+    	}
 	}
 	
 	public void stop() {
