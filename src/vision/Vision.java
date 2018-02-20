@@ -1,9 +1,13 @@
 package vision;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -45,23 +49,106 @@ public class Vision implements Runnable {
 		CvSink sinkFront = CameraServer.getInstance().getVideo(camFront);
 		CvSink sinkRear =  CameraServer.getInstance().getVideo(camRear);
 		//      CvSink cvSink2 = CameraServer.getInstance().getVideo(camera2);
-		  
-		//CvSource outputStream = camServer.putVideo("cam0", 320, 240);
+		
+		int width = 320;
+		int height = 240;
+		
+		CvSource outputStream = camServer.putVideo("openCV", width, height);
 		
 		sinkFront.setEnabled(true);
 		sinkRear.setEnabled(true);
 		
 		Mat image = new Mat();
+		Mat output = new Mat();
+		
 		Mat imgSmall = null;
 		Size smallSize = new Size (160, 120);
 		
+		int hueMin = 20;
+		int hueMax = 35;
+		int satMin = 30;
+		int satMax = 125;
+		int volMin = 150;
+		int volMax = 240;
+		
+		ArrayList<Blob> blobs = new ArrayList<>();
 		
 		while(true) {
 			try {
 				sinkFront.grabFrame(image);
 				
-				//outputStream.putFrame (equalizeIntensity(image));
-				
+				if(image.channels() == 3) {
+					
+					//Imgproc.threshold(image, output, 127, 255, Imgproc.THRESH_BINARY);
+					//SmartDashboard.putNumber("OpenCV", image.channels());
+					Imgproc.cvtColor(image, output, Imgproc.COLOR_BGR2HSV);
+					//org.opencv.imgproc.Imgproc.rectangle(output, point1, point2, new Scalar(255, 255, 255));
+					Core.inRange(output, new Scalar(hueMin, satMin, volMin), new Scalar(hueMax, satMax, volMax), output);
+					
+					
+					
+					blobs.clear();
+					
+					float threshold = 80;
+					
+					for(int x = 0; x < width; x++) {
+						for(int y = 0; y < height; y++) {
+							
+							double[] colour = output.get(x, y);
+							
+							double currentHue;
+							if(colour != null) {
+								
+								SmartDashboard.getNumber("Colour Size", colour.length);
+								
+								currentHue = colour[0];
+								
+								float d = distSq((float)currentHue ,(float)currentHue, (float)currentHue, 255, 255, 255);
+								
+								if(d < threshold*threshold) {
+									
+									boolean found = false;
+									for(Blob b : blobs) {
+										if(b.isNear((float)x, (float)y)){
+											b.add((float)x, (float)y);
+											found = true;
+											break;
+										}
+									}
+									
+									if(!found) {
+										Blob b = new Blob((float)x, (float)y);
+										blobs.add(b);
+									}
+									
+								}
+								
+							}
+							
+						}
+					}
+					
+					/*
+					
+					for(Blob b : blobs) {
+						float x1 = b.get_minx();
+						float y1 = b.get_miny();
+						float x2 = b.get_maxx();
+						float y2 = b.get_maxy();
+						
+						Point point1 = new Point(x1, y1);
+						Point point2 = new Point(x2, y2);
+
+						org.opencv.imgproc.Imgproc.rectangle(output, point1, point2, new Scalar(255, 255, 255, 100));
+						
+						
+					}
+					
+					*/
+					
+					outputStream.putFrame (output);
+					
+				}
 				
 				
 				Thread.sleep(15);
@@ -76,6 +163,10 @@ public class Vision implements Runnable {
 			}
 			
 		}
+	}
+	
+	float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
+		return (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1);
 	}
 	
 	
