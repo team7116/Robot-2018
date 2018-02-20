@@ -30,9 +30,6 @@ public class DownAndRelease extends CommandGroup {
     	Robot.setMessage("DownAndRelease : Begin");
     	addSequential(new PinceBaisser());
     	
-    	
-    	addSequential(new PinceOuvrir(0.75));
-    	addSequential(new PinceLever(0.25));
 
     	Robot.setMessage("DownAndRelease : End");
     }

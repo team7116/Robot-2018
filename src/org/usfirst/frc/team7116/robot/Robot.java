@@ -189,6 +189,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		SmartDashboard.putNumber("Pince Y", pince.getY());
 	}
 	
 	public static void setMessage(String message) {

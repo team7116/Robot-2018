@@ -2,8 +2,7 @@ package org.usfirst.frc.team7116.robot.subsystems;
 
 import org.usfirst.frc.team7116.robot.RobotMap;
 
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.I2C.Port;
+
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -14,10 +13,13 @@ public class Pince extends Subsystem {
 	Solenoid baisser;
 	Solenoid lever;
 	
-	I2C accelerometre;
-	int addr = 0x68;
-	final static int REG_CONFIG = 0x1A;
+	MPU6050 mpu6050;
 	
+	
+	
+	byte [] toSend = new byte[1];
+	
+	int [] accelData = new int[6];
 	
 	@Override
 	protected void initDefaultCommand() {
@@ -33,10 +35,8 @@ public class Pince extends Subsystem {
 		baisser = new Solenoid(RobotMap.pcmAdr, RobotMap.SolenoidBaisserPince);
 		lever = new Solenoid(RobotMap.pcmAdr, RobotMap.SolenoidLeverPince);
 		
-		accelerometre = new I2C(Port.kOnboard, addr);
-		
-		accelerometre.write(REG_CONFIG, 0x05);
-		
+		mpu6050 = new MPU6050();
+		mpu6050.reset();
 	}
 	
 	
@@ -59,6 +59,10 @@ public class Pince extends Subsystem {
 	public void lever() {
 		lever.set(true);
 		baisser.set(false);
+	}
+	
+	public double getY() {
+		return mpu6050.getYAcceleration();
 	}
 
 
