@@ -77,6 +77,19 @@ public class Robot extends TimedRobot {
 
 	    
 	}
+	
+	@Override
+	public void robotPeriodic() {
+		cT = Timer.getFPGATimestamp();
+		dT = cT - pT;
+		pT = cT;
+
+		SmartDashboard.putNumber("Pince Y", pince.getY());
+		SmartDashboard.putNumber("Time", cT);
+		SmartDashboard.putNumber("delta Time", dT);
+
+		
+	}
 
 	/**
 	 * This function is called once each time the robot enters Disabled mode.
@@ -91,6 +104,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic() {
+
 		Scheduler.getInstance().run();
 	}
 
@@ -168,12 +182,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		cT = Timer.getFPGATimestamp();
-		dT = cT - pT;
-		pT = cT;
+
 		
-		SmartDashboard.putNumber("Time", cT);
-		SmartDashboard.putNumber("delta Time", dT);
 		
 		Scheduler.getInstance().run();
 		
@@ -189,7 +199,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		SmartDashboard.putNumber("Pince Y", pince.getY());
+		
 	}
 	
 	public static void setMessage(String message) {
