@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.VisionThread;
 import vision.Vision;
 
+import org.usfirst.frc.team7116.robot.commands.AutonomousCommands;
 import org.usfirst.frc.team7116.robot.commands.DriveWithJoystick;
 import org.usfirst.frc.team7116.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team7116.robot.subsystems.MoteurSimple;
@@ -50,11 +51,13 @@ public class Robot extends TimedRobot {
 
 	Compressor c = new Compressor(0);
 	
-	Command m_autonomousCommand;
+	AutonomousCommands autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
 	
-	Thread vision;
+	Thread visionThread;
+	public static Vision vision;
 
+	
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -62,7 +65,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-		c.setClosedLoopControl(true);
+		//c.setClosedLoopControl(true);
 		
 		m_oi = new OI();
 		m_chooser.addDefault("Default Auto", new DriveWithJoystick());
@@ -70,10 +73,10 @@ public class Robot extends TimedRobot {
 		//SmartDashboard.putData("Auto mode", m_chooser);
 				
 		driveTrain.resetEncoders();
+		vision = new Vision();
+		visionThread = new Thread(vision);
 		
-		vision = new Thread(new Vision());
-		
-		vision.start();
+		visionThread.start();
 
 	    
 	}
@@ -87,7 +90,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Pince Y", pince.getY());
 		SmartDashboard.putNumber("Time", cT);
 		SmartDashboard.putNumber("delta Time", dT);
-
+		SmartDashboard.putNumber("Position Left", Robot.driveTrain.getLeftWheelPosition());
+		SmartDashboard.putNumber("Position Right", Robot.driveTrain.getRightWheelPosition());
 		
 	}
 
@@ -121,7 +125,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		m_autonomousCommand = m_chooser.getSelected();
+		autonomousCommand = new AutonomousCommands();
 
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -145,8 +149,8 @@ public class Robot extends TimedRobot {
 		}
 
 		// schedule the autonomous command (example)
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.start();
+		if (autonomousCommand != null) {
+			//autonomousCommand.start();
 		}
 	}
 
@@ -155,6 +159,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		
 		Scheduler.getInstance().run();
 	}
 
@@ -164,8 +169,8 @@ public class Robot extends TimedRobot {
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.cancel();
+		if (autonomousCommand != null) {
+			autonomousCommand.cancel();
 		}
 		
 		driveTrain.resetEncoders();

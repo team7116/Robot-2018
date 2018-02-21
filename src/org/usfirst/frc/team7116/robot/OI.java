@@ -7,7 +7,10 @@
 
 package org.usfirst.frc.team7116.robot;
 
+import org.usfirst.frc.team7116.robot.commands.AutoDrive;
+import org.usfirst.frc.team7116.robot.commands.AutoDrive2018;
 import org.usfirst.frc.team7116.robot.commands.DownAndRelease;
+import org.usfirst.frc.team7116.robot.commands.DriveAutoCubeTracking;
 import org.usfirst.frc.team7116.robot.commands.DriveWithJoystick;
 import org.usfirst.frc.team7116.robot.commands.LeverBaisserGrappin;
 import org.usfirst.frc.team7116.robot.commands.PinceBaisser;
@@ -20,6 +23,7 @@ import edu.wpi.first.wpilibj.Joystick.ButtonType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import vision.Vision;
 
 public class OI {
 	
@@ -40,6 +44,10 @@ public class OI {
 		//Commande pour baisser et lever le bras du grappin (ports 3 et 4)
 		//buttonX.whileHeld(new LeverBaisserGrappin());
 		buttonY.whenPressed(new DownAndRelease());
+		
+		//buttonX.whenPressed(new AutoDrive(16192, 16192));
+		
+		buttonX.whileHeld(new DriveAutoCubeTracking());
 			
 		//Commandes pour ouvrir et fermer la pince pneumatique (ports 1 et 2)
 		buttonLB.whenPressed(new PinceOuvrir());

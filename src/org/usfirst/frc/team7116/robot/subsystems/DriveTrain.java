@@ -44,13 +44,16 @@ public class DriveTrain extends Subsystem {
 	public Encoder encoderLeft;
 	public Encoder encoderRight;
 	
-	
-	private final double TICK_PER_CM = 42.75;
+	private final int TICK_PER_ROTATION = 8092;
+	private final double TICK_PER_CM = 169;
 
 	/**
 	 * Distance entre le centre la roue du centre
 
 	 */
+	
+	
+	//=====Encoder PPR: 2048
 	
 	private double wheelToCentre = 25; // cm
 	private double wheelDiametre = 15.24;
@@ -83,12 +86,19 @@ public class DriveTrain extends Subsystem {
 		wheelLeft.setSensorPhase(false);
 		wheelRight.setSensorPhase(true);
 		
+//		wheelRight.setInverted(false);
+//		wheelLeft.setInverted(true);
+		
 		resetEncoders();
 
 		
 		wheelLeft.setSafetyEnabled(false);
 		wheelRight.setSafetyEnabled(false);
 		
+		//wheelRight.config_kP(10, 0, RobotMap.kTimeoutMs);
+		
+		wheelRight.valueUpdated();
+		wheelLeft.valueUpdated();
 		
 		
 	}
@@ -194,7 +204,7 @@ public class DriveTrain extends Subsystem {
 	}
 	
 	public int getRightWheelPosition() {
-		return -wheelRight.getSensorCollection().getQuadraturePosition();
+		return wheelRight.getSensorCollection().getQuadraturePosition();
 	}
 	
 	public void resetEncoders() {

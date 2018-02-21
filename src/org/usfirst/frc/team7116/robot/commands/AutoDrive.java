@@ -4,6 +4,7 @@ import org.usfirst.frc.team7116.robot.Robot;
 import org.usfirst.frc.team7116.robot.RobotMap;
 import org.usfirst.frc.team7116.robot.subsystems.DriveTrain;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -15,11 +16,11 @@ public class AutoDrive extends Command {
 
 	private DriveTrain dt;
 	
-	private double valeur_de_un = 0.8; //Math
+	private double valeur_de_un = 1; //Math
 	
 	private double leftGoal;
 	private double rightGoal;
-	private double tolerance = .5;//1.5;
+	private double tolerance = 10;//1.5;
 	private double vitesseDroite = 0.0;
 	private double vitesseGauche = 0.0;
 	private double directionDroite = 1.0;
@@ -133,10 +134,11 @@ public class AutoDrive extends Command {
     protected void execute() {
     	
     	// Calcul de l'erreur entre l'objectif et la position actuelle
-    	erreurDroite = Math.abs(rightGoal) -  Math.abs(dt.wheelRight.getSensorCollection().getQuadraturePosition());
-    	erreurGauche = Math.abs(leftGoal) -  Math.abs(dt.wheelLeft.getSensorCollection().getQuadraturePosition());
+    	erreurDroite = rightGoal -  dt.getRightWheelPosition();
+    	erreurGauche = leftGoal -  dt.getLeftWheelPosition();
     	
-    	
+    	double erreurDroiteAbs = Math.abs(erreurDroite);
+    	double erreurGaucheAbs = Math.abs(erreurGauche);
     	
 //    	if (hasStarted > 10) {
 //	    	if (erreurDroite > erreurDroitePrec) {
@@ -150,13 +152,13 @@ public class AutoDrive extends Command {
 //    	}
     	
     	// Si on a atteind lobjectif on stop!
-    	if(erreurDroite <= 0)
+    	if(erreurDroiteAbs <= tolerance)
     	{	
     		vitesseDroite = 0;
     		//dt.roueDroite.enableBrakeMode(true);
     	}else{
 	    	// Si on s'approche de l'objectif on ralentit
-	    	if (erreurDroite < tolerance ) {
+	    	if (erreurDroite < 0 ) {
 	    		vitesseDroite = vitesseDroite - (0.1 * directionDroite);
 	    		
 	    		if (Math.abs(vitesseDroite) <= vitesseMinimum) {
@@ -174,12 +176,12 @@ public class AutoDrive extends Command {
     	}
     	
 
-    	if(erreurGauche<=0)
+    	if(erreurGaucheAbs <= tolerance)
     	{
     		vitesseGauche = 0;
     		//dt.roueGauche.enableBrakeMode(true);
     	}else{
-	    	if (erreurGauche < tolerance ) {
+	    	if (erreurGauche < 0 ) {
 	    		vitesseGauche = vitesseGauche - (0.1 * directionGauche);
 	    		
 	    		if (Math.abs(vitesseGauche) <= vitesseMinimum) {
