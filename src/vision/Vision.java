@@ -15,16 +15,29 @@ import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision implements Runnable {
+		
 	private CameraServer camServer;
 	
 	public float closestCenter = 1000;
 	public float centerX;
 	
+	private boolean is_enabled = true;
+	
 	int width = 320;
 	int height = 240;
+	
+	public int hueMin = 15;
+	public int hueMax = 35;
+	public int satMin = 60;
+	public int satMax = 170;
+	public int volMin = 130;
+	public int volMax = 250;
 	
 	
 	public Vision() {
@@ -54,9 +67,9 @@ public class Vision implements Runnable {
 		
 		CvSink sinkFront = CameraServer.getInstance().getVideo(camFront);
 		//CvSink sinkRear =  CameraServer.getInstance().getVideo(camRear);
-		//      CvSink cvSink2 = CameraServer.getInstance().getVideo(camera2);
+		//CvSink cvSink2 = CameraServer.getInstance().getVideo(camera2);
 		
-		int intrestX = 20;
+		int intrestX = 0;
 		int intrestY = height/2;
 		
 		CvSource outputStream = camServer.putVideo("openCV", 160, 120);
@@ -67,17 +80,7 @@ public class Vision implements Runnable {
 		Mat image = new Mat();
 		Mat output = new Mat();
 		
-		
-		int hueMin = 15;
-		int hueMax = 35;
-		int satMin = 60;
-		int satMax = 170;
-		int volMin = 130;
-		int volMax = 250;
-		
-		
-		int centerIndex;
-		
+		SmartDashboard.putNumber("minHue", hueMin);
 		
 		ArrayList<blob> blobs = new ArrayList<>();
 		
@@ -85,7 +88,7 @@ public class Vision implements Runnable {
 			try {
 				sinkFront.grabFrame(image);
 				
-				if(image.channels() == 3) {
+				if(image.channels() == 3 && is_enabled) {
 					
 					
 					Imgproc.cvtColor(image, output, Imgproc.COLOR_BGR2HSV);
@@ -141,8 +144,33 @@ public class Vision implements Runnable {
 					SmartDashboard.putNumber("Blob Array Size", blobs.size());
 					
 					
+					//=====Center Finder=====\\
 					
-					//======Blob draw=====
+					closestCenter = 1000;
+					
+					int centerIndex = -1;
+					
+					for(int i = 0; i < blobs.size(); i++){
+						
+						blob part = blobs.get(i);
+						
+						part.set_intrest(false);
+						
+						if(Math.abs(width/2 - part.get_center_x()) < closestCenter){
+							centerIndex = i;
+							closestCenter = Math.abs(width/2 - part.get_center_x());
+							centerX = part.get_center_x();
+						}
+						
+					}
+					
+					if(centerIndex != -1){
+						blob part = blobs.get(centerIndex);
+						part.set_intrest(true);
+					}
+					
+					
+					//======Blob draw=====\\
 					
 					for(blob b : blobs) {
 						
@@ -155,23 +183,8 @@ public class Vision implements Runnable {
 						Point point1 = new Point((double)x1, (double)y1);
 						Point point2 = new Point((double)x2, (double)y2);
 						
-						
-						Imgproc.rectangle(output, point1, point2, new Scalar(255));
-						
-					}
-					
-					
-					
-					
-					closestCenter = 1000;
-					
-					for(int i = 0; i < blobs.size(); i++){
-						
-						blob part = blobs.get(i);
-						if(Math.abs(width/2 - part.get_center_x()) < closestCenter){
-							centerIndex = i;
-							closestCenter = Math.abs(width/2 - part.get_center_x());
-							centerX = part.get_center_x();
+						if(b.is_intrest()){
+							Imgproc.rectangle(output, point1, point2, new Scalar(255));
 						}
 						
 					}
@@ -236,6 +249,15 @@ public class Vision implements Runnable {
 		return width;
 	}
 	
+	
+	public void toggleEnabled(){
+		is_enabled = !is_enabled;
+		if(is_enabled){
+			SmartDashboard.putString("OpenCV status", "on");
+		}else {
+			SmartDashboard.putString("OpenCV status", "off");
+		}
+	}
 	
 
 }

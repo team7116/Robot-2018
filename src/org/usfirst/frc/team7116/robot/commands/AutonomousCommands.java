@@ -24,7 +24,9 @@ public class AutonomousCommands extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-    	addSequential(new AutoDrive(-32000));
-    	addSequential(new AutoDrive(8092,-8092));
+    	
+    	//1 Complete wheel rotation: 2048 ticks
+    	
+    	addSequential(new AutoDrive(4096, 4096));
     }
 }

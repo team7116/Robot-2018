@@ -25,11 +25,16 @@ public class AutoDrive extends Command {
 	private double vitesseGauche = 0.0;
 	private double directionDroite = 1.0;
 	private double directionGauche = 1.0;
-	private double vitesseMaximumDroite = 0.3;
-	private double vitesseMaximumGauche = 0.3;
+	private double vitesseMaximumDroite = 0.1;
+	private double vitesseMaximumGauche = 0.1;
 	private double vitesseMinimum = 0.2;
 	
 	private int hasStarted = 0;
+	
+	
+	private double leftRatio = -1; //Keep wheel on a 1/1 speed ratio and invert wheel (mirror)
+	private double rightRatio = 1; //Keep wheel on a 1/1 speed ratio
+	
 	
 	/**
 	 * Taux d'acceleration maximum en voltage par seconde
@@ -51,10 +56,12 @@ public class AutoDrive extends Command {
     	super();
     	initProperties();
     	
-    	leftGoal = rightGoal = (position * valeur_de_un);
+    	leftGoal = position * valeur_de_un * rightRatio;
+    	rightGoal = position * valeur_de_un * leftRatio;
     	
     	
-    	directionDroite = directionGauche = position < 0 ? -1.0 : 1.0;
+    	directionDroite = position < 0 ? -1.0 : 1.0;
+    	directionGauche = position < 0 ? -1.0 : 1.0;
     	
     }
     
@@ -68,8 +75,8 @@ public class AutoDrive extends Command {
     	super();
     	initProperties();
     	
-    	leftGoal = left * valeur_de_un;
-    	rightGoal = right * valeur_de_un;
+    	leftGoal = left * valeur_de_un * leftRatio;
+    	rightGoal = right * valeur_de_un * rightRatio;
     	
     	directionDroite = right < 0 ? -1.0 : 1.0;
     	directionGauche = left < 0 ? -1.0 : 1.0;
@@ -100,7 +107,7 @@ public class AutoDrive extends Command {
 /*    	dt.roueDroite.setVoltageRampRate(rampRate);
     	dt.roueDroite.enableBrakeMode(true);
     	dt.roueGauche.setVoltageRampRate(rampRate);*/
-    	dt.wheelLeft.setInverted(true);
+    	//dt.wheelLeft.setInverted(true);
 
     	//    	dt.roueDroite.setPID(1.5, .05, .1);
 //    	dt.roueDroite.changeControlMode(TalonControlMode.Speed);
@@ -197,8 +204,10 @@ public class AutoDrive extends Command {
 	
 	    	}
     	}
+    	
     	dt.wheelRight.set(vitesseDroite);
-    	dt.wheelLeft.set(vitesseGauche);
+    	dt.wheelLeft.set(-vitesseGauche);
+    	
     	
     	erreurDroitePrec = erreurDroite;
     	erreurGauchePrec = erreurGauche;
