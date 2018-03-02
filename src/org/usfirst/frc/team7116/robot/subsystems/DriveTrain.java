@@ -89,7 +89,7 @@ public class DriveTrain extends Subsystem {
 	
 		drive = new DifferentialDrive(wheelLeft, wheelRight);
 		
-//		dios = new ArrayList<>();
+//		dios = new ArrayList<DigitalInput>();
 //		
 //		for (int i = 0; i < 10; i++) {
 //			DigitalInput current = new DigitalInput(i);
@@ -183,8 +183,6 @@ public class DriveTrain extends Subsystem {
 		
 		if (msgAcc >= msgInt) {
 			msgAcc = 0;
-			
-			System.out.println("DriveTrain.drive");
 		}
 	}
 	

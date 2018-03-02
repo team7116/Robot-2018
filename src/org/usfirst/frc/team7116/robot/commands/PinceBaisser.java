@@ -19,6 +19,7 @@ public class PinceBaisser extends Command {
     public PinceBaisser(double delay) {
         requires(Robot.pince);
         this.delay = delay;
+        this.setTimeout(delay);
     }
 
     // Called just before this Command runs the first time
@@ -47,7 +48,7 @@ public class PinceBaisser extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return done;
+        return done || isTimedOut();
     }
 
     // Called once after isFinished returns true

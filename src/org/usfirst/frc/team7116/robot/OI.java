@@ -7,25 +7,16 @@
 
 package org.usfirst.frc.team7116.robot;
 
-import org.usfirst.frc.team7116.robot.commands.AutoDrive;
-import org.usfirst.frc.team7116.robot.commands.AutoDrive2018;
-import org.usfirst.frc.team7116.robot.commands.DownAndRelease;
 import org.usfirst.frc.team7116.robot.commands.DriveAutoCubeTracking;
-import org.usfirst.frc.team7116.robot.commands.DriveWithJoystick;
-import org.usfirst.frc.team7116.robot.commands.LeverBaisserGrappin;
 import org.usfirst.frc.team7116.robot.commands.PinceBaisser;
 import org.usfirst.frc.team7116.robot.commands.PinceFermer;
 import org.usfirst.frc.team7116.robot.commands.PinceLever;
 import org.usfirst.frc.team7116.robot.commands.PinceOuvrir;
 import org.usfirst.frc.team7116.robot.commands.toggleVision;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Joystick.ButtonType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import vision.Vision;
 
 public class OI {
 	

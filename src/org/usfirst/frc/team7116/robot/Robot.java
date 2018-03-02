@@ -11,10 +11,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.vision.VisionThread;
 import vision.Vision;
 
 import org.usfirst.frc.team7116.robot.commands.AutonomousCommands;
@@ -23,12 +21,8 @@ import org.usfirst.frc.team7116.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team7116.robot.subsystems.MoteurSimple;
 import org.usfirst.frc.team7116.robot.subsystems.Pince;
 
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.VideoSource;
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.I2C;
 
 
 
@@ -139,11 +133,12 @@ public class Robot extends TimedRobot {
 		String gameData;
 		gameData = DriverStation.getInstance().getGameSpecificMessage();
 
+		
 		if (gameData.length() > 0) {
 			if (gameData.charAt(0) == 'L') {
 				// Put left auto code here
 			} else {
-				// Put right auto code here
+				//autonomousCommand = new AutonomousCommands(1);
 			}
 		}
 

@@ -113,6 +113,26 @@ public class AutoDrive extends Command {
     	
     	dt.resetEncoders();
     }
+    
+    public AutoDrive(double left, double right, int countMode, double minSpeed) {
+    	super();
+    	initProperties();
+    	
+    	leftGoal = left;
+    	rightGoal = right;
+    	
+    	if (countMode == 1) {
+    		leftGoal = left * dt.TICK_PER_ROTATION;
+    		rightGoal = right * dt.TICK_PER_ROTATION;
+    	}
+    	
+    	rightDirection = right < 0 ? -1.0 : 1.0;
+    	leftDirection = left < 0 ? -1.0 : 1.0;
+    	
+    	minimumSpeed = minSpeed;
+    	
+    	dt.resetEncoders();
+    }
 
     private void initProperties() {
     	requires (Robot.driveTrain);
@@ -162,6 +182,8 @@ public class AutoDrive extends Command {
     int rightDirCurrent;
     int leftDirCurrent;
     
+    
+    
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	
@@ -184,13 +206,10 @@ public class AutoDrive extends Command {
     	{	
     		rightSpeed = 0;
     		rightDone = true;
-    		SmartDashboard.putString("YOLO", "RIGHT!");
     	}else{
     		rightSpeed = minimumSpeed * rightDirCurrent;
     	}
     	
-
-
     	if(erreurGaucheAbs <= tolerance && !leftDone)
     	{
     		leftSpeed = 0;
@@ -200,31 +219,28 @@ public class AutoDrive extends Command {
    		
     	}
     	
-    	dt.setRightSpeed(rightSpeed);																																
+    	dt.setRightSpeed(rightSpeed);
     	dt.setLeftSpeed(leftSpeed);						
-    	
     	
     	erreurDroitePrec = erreurDroite;																			
     	erreurGauchePrec = erreurGauche;
     	
     	hasStarted++;
 
-    	SmartDashboard.putNumber("Right speed", rightSpeed);
-    	SmartDashboard.putNumber("Right error", erreurDroite);
-    	SmartDashboard.putNumber("Right error abs", erreurDroiteAbs);
-    	SmartDashboard.putNumber("Right Goal", rightGoal);
-    	SmartDashboard.putBoolean("Right isDone", rightDone);
-		SmartDashboard.putNumber("Right pos", rightPos);
-//    	SmartDashboard.putNumber("Right direction", rightDirection);
-//    	SmartDashboard.putNumber("Right direction live", rightDirCurrent);
-    	
-    	SmartDashboard.putNumber("Left speed", leftSpeed);
-    	SmartDashboard.putNumber("Left error", erreurGauche);
-    	SmartDashboard.putNumber("Left goal", leftGoal);
-    	SmartDashboard.putBoolean("Left isDone", leftDone);
-    	SmartDashboard.putNumber("Left pos", leftPos);
-//    	SmartDashboard.putNumber("Left direction", leftDirection);
-//    	SmartDashboard.putNumber("Left direction live", leftDirCurrent);
+    	if (hasStarted % 10 == 0) {
+	    	SmartDashboard.putNumber("Right speed", rightSpeed);
+	    	SmartDashboard.putNumber("Right error", erreurDroite);
+	    	SmartDashboard.putNumber("Right error abs", erreurDroiteAbs);
+	    	SmartDashboard.putNumber("Right Goal", rightGoal);
+	    	SmartDashboard.putBoolean("Right isDone", rightDone);
+			SmartDashboard.putNumber("Right pos", rightPos);
+	    	
+	    	SmartDashboard.putNumber("Left speed", leftSpeed);
+	    	SmartDashboard.putNumber("Left error", erreurGauche);
+	    	SmartDashboard.putNumber("Left goal", leftGoal);
+	    	SmartDashboard.putBoolean("Left isDone", leftDone);
+	    	SmartDashboard.putNumber("Left pos", leftPos);
+    	}
     }
     
 
@@ -236,8 +252,7 @@ public class AutoDrive extends Command {
     	
     	if (result) {
     		SmartDashboard.putString("Message", "Autodrive end");
-    		//debug();
-    		//SmartDashboard.putBoolean("isTimeout", isTimedOut());
+
     	}
 
     	return result;
