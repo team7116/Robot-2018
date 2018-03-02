@@ -47,7 +47,7 @@ public class DriveTrain extends Subsystem {
 	public Encoder encoderLeft;
 	public Encoder encoderRight;
 	
-	private final int TICK_PER_ROTATION = 8092;
+	public final int TICK_PER_ROTATION = 8092;
 	private final double TICK_PER_CM = 169;
 	
 	private DigitalInput pin_8;
@@ -71,7 +71,7 @@ public class DriveTrain extends Subsystem {
 	private double wheelCircumference = 47.87787;
 	
 	public double XFactor = 0.6;
-	public double XThreshold = 1;
+	public double XThreshold = 0.9;
 	
 	public SensorCollection lwSensors;
 
@@ -100,6 +100,14 @@ public class DriveTrain extends Subsystem {
 		// Src : http://www.ctr-electronics.com/downloads/api/cpp/html/classctre_1_1phoenix_1_1motorcontrol_1_1can_1_1_talon_s_r_x.html#a2b15046cefe6828a27409584077c7397
 		wheelLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, RobotMap.kTimeoutMs);
 		wheelRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, RobotMap.kTimeoutMs);
+		
+		wheelLeft.configContinuousCurrentLimit(RobotMap.kCurrentLimit, RobotMap.kTimeoutMs);
+		wheelLeft.configPeakCurrentDuration(0, RobotMap.kTimeoutMs);
+		wheelLeft.enableCurrentLimit(true);
+		
+		wheelRight.configContinuousCurrentLimit(RobotMap.kCurrentLimit, RobotMap.kTimeoutMs);
+		wheelRight.configPeakCurrentDuration(0, RobotMap.kTimeoutMs);
+		wheelRight.enableCurrentLimit(true);
 		
 		// Before G18
 		wheelRight.setInverted(true);
@@ -131,14 +139,12 @@ public class DriveTrain extends Subsystem {
 	public double remapx(double X){
 		
 		if(Math.abs(X) >= XThreshold) {
-			if(X > 0) {
-				X = 1;
-			}else {
-				X = -1;
-			}
+			XFactor = 0.9;
 		}else {
-			X *= XFactor;
+			XFactor = 0.6;
 		}
+		
+		X *= XFactor;
 		
 		return X;
 		

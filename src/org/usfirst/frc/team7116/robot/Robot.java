@@ -90,8 +90,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Pince Y", pince.getY());
 		SmartDashboard.putNumber("Time", cT);
 		SmartDashboard.putNumber("delta Time", dT);
-		SmartDashboard.putNumber("Position Left", Robot.driveTrain.getLeftWheelPosition());
-		SmartDashboard.putNumber("Position Right", Robot.driveTrain.getRightWheelPosition());
+
 		
 	}
 

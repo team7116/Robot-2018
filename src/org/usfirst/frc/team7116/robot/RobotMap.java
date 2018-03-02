@@ -30,6 +30,7 @@ public class RobotMap {
 	public static int ServoTilt = 1;
 	
 	public static final int kTimeoutMs = 10;
+	public static final int kCurrentLimit = 30;
 	
 
 	public enum JoyConfig {
