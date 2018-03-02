@@ -150,7 +150,7 @@ public class Robot extends TimedRobot {
 
 		// schedule the autonomous command (example)
 		if (autonomousCommand != null) {
-			//autonomousCommand.start();
+			autonomousCommand.start();
 		}
 	}
 
@@ -205,6 +205,11 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		
+	}
+	
+	@Override
+	public void testInit() {
+		driveTrain.resetEncoders();
 	}
 	
 	public static void setMessage(String message) {

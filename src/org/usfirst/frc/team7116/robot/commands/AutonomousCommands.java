@@ -27,6 +27,6 @@ public class AutonomousCommands extends CommandGroup {
     	
     	//1 Complete wheel rotation: 2048 ticks
     	
-    	addSequential(new AutoDrive(4096, 4096));
+    	addSequential(new AutoDrive(40960, 40960));
     }
 }

@@ -7,6 +7,8 @@
 
 package org.usfirst.frc.team7116.robot.subsystems;
 
+import java.util.ArrayList;
+
 import org.usfirst.frc.team7116.robot.Robot;
 import org.usfirst.frc.team7116.robot.RobotMap;
 import org.usfirst.frc.team7116.robot.RobotMap.JoyConfig;
@@ -18,6 +20,7 @@ import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Joystick.AxisType;
@@ -46,11 +49,18 @@ public class DriveTrain extends Subsystem {
 	
 	private final int TICK_PER_ROTATION = 8092;
 	private final double TICK_PER_CM = 169;
+	
+	private DigitalInput pin_8;
+	private DigitalInput pin_9;
+	
+	private ArrayList<DigitalInput> dios;
 
 	/**
 	 * Distance entre le centre la roue du centre
 
 	 */
+	
+	//auto switch: 8-9
 	
 	
 	//=====Encoder PPR: 2048
@@ -62,7 +72,7 @@ public class DriveTrain extends Subsystem {
 	
 	public double XFactor = 0.6;
 	public double XThreshold = 1;
-
+	
 	public SensorCollection lwSensors;
 
 	
@@ -73,21 +83,31 @@ public class DriveTrain extends Subsystem {
 	
 	public DriveTrain() {
 		super();
+		
 		wheelLeft = new WPI_TalonSRX(RobotMap.TalonGauche);
 		wheelRight = new WPI_TalonSRX(RobotMap.TalonDroite);
 	
 		drive = new DifferentialDrive(wheelLeft, wheelRight);
 		
+//		dios = new ArrayList<>();
+//		
+//		for (int i = 0; i < 10; i++) {
+//			DigitalInput current = new DigitalInput(i);
+//			
+//			dios.add(current);
+//		}
+//		
 		// Src : http://www.ctr-electronics.com/downloads/api/cpp/html/classctre_1_1phoenix_1_1motorcontrol_1_1can_1_1_talon_s_r_x.html#a2b15046cefe6828a27409584077c7397
 		wheelLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, RobotMap.kTimeoutMs);
 		wheelRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, RobotMap.kTimeoutMs);
 		
-		// Inversion des encodeurs
-		wheelLeft.setSensorPhase(false);
-		wheelRight.setSensorPhase(true);
+		// Before G18
+		wheelRight.setInverted(true);
+		//wheelLeft.setInverted(true);
 		
-//		wheelRight.setInverted(false);
-//		wheelLeft.setInverted(true);
+		// Inversion des encodeurs
+		//wheelLeft.setSensorPhase(false);
+		//wheelRight.setSensorPhase(true);
 		
 		resetEncoders();
 
@@ -100,6 +120,7 @@ public class DriveTrain extends Subsystem {
 		wheelRight.valueUpdated();
 		wheelLeft.valueUpdated();
 		
+
 		
 	}
 	
@@ -133,12 +154,12 @@ public class DriveTrain extends Subsystem {
 		
 		msgAcc += Robot.dT;
 		
-		double yAxis = -stick.getTriggerAxis(Hand.kLeft)+ stick.getTriggerAxis(Hand.kRight);
+		double yAxis = -stick.getTriggerAxis(Hand.kLeft) + stick.getTriggerAxis(Hand.kRight);
 		double xAxis = remapx(stick.getX(Hand.kLeft));
 
 		switch(driveConfig){
 		case kTriggers:
-			yAxis = -stick.getTriggerAxis(Hand.kLeft)+ stick.getTriggerAxis(Hand.kRight);
+			yAxis = -stick.getTriggerAxis(Hand.kLeft) + stick.getTriggerAxis(Hand.kRight);
 			SmartDashboard.putString("JoyStick Mode", "Triggers");
 			break;
 		case kleftStickOnly:
@@ -191,6 +212,14 @@ public class DriveTrain extends Subsystem {
 		wheelRight.set(ControlMode.Position, TICK_PER_CM * cmRight);
 	}
 	
+	public void setRightSpeed(double speed) {
+		wheelRight.set(-speed);
+	}
+	
+	public void setLeftSpeed(double speed) {
+		wheelLeft.set(speed);
+	}
+	
 	public int getLeftWheelVelocity() {
 		return wheelLeft.getSensorCollection().getQuadratureVelocity();
 	}
@@ -204,11 +233,22 @@ public class DriveTrain extends Subsystem {
 	}
 	
 	public int getRightWheelPosition() {
-		return wheelRight.getSensorCollection().getQuadraturePosition();
+		return -wheelRight.getSensorCollection().getQuadraturePosition();
 	}
 	
 	public void resetEncoders() {
 		wheelLeft.setSelectedSensorPosition(0, 0, RobotMap.kTimeoutMs);
 		wheelRight.setSelectedSensorPosition(0, 0, RobotMap.kTimeoutMs);
 	}
+	
+	
+//	// Retourne la valeur du DIO indique
+//	public boolean readDIO(int channel) {
+//		
+//		if (dios != null)
+//			return dios.get(channel).get();
+//		
+//		return false;
+//	}
+	
 }

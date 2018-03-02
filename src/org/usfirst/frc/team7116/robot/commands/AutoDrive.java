@@ -7,6 +7,7 @@ import org.usfirst.frc.team7116.robot.subsystems.DriveTrain;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Classe permettant de lancer des instructions de deplacements simples et automatiques au
@@ -17,22 +18,24 @@ public class AutoDrive extends Command {
 	private DriveTrain dt;
 	
 	private double valeur_de_un = 1; //Math
+	private final double TWO_ROTATIONS = 8192 * 2;
+	
 	
 	private double leftGoal;
 	private double rightGoal;
-	private double tolerance = 10;//1.5;
-	private double vitesseDroite = 0.0;
-	private double vitesseGauche = 0.0;
-	private double directionDroite = 1.0;
-	private double directionGauche = 1.0;
-	private double vitesseMaximumDroite = 0.1;
-	private double vitesseMaximumGauche = 0.1;
-	private double vitesseMinimum = 0.2;
+	private double tolerance = 100;//1.5;
+	private double rightSpeed = 0.0;
+	private double leftSpeed = 0.0;
+	private double rightDirection = 1.0;
+	private double leftDirection = 1.0;
+	private double rightMaxSpeed = 0.4;
+	private double leftMaxSpeed = 0.4;
+	private double minimumSpeed = 0.25;
 	
 	private int hasStarted = 0;
 	
 	
-	private double leftRatio = -1; //Keep wheel on a 1/1 speed ratio and invert wheel (mirror)
+	private double leftRatio = 1; //Keep wheel on a 1/1 speed ratio and invert wheel (mirror)
 	private double rightRatio = 1; //Keep wheel on a 1/1 speed ratio
 	
 	
@@ -56,12 +59,12 @@ public class AutoDrive extends Command {
     	super();
     	initProperties();
     	
-    	leftGoal = position * valeur_de_un * rightRatio;
-    	rightGoal = position * valeur_de_un * leftRatio;
+    	leftGoal = position * valeur_de_un;
+    	rightGoal = position * valeur_de_un;
     	
     	
-    	directionDroite = position < 0 ? -1.0 : 1.0;
-    	directionGauche = position < 0 ? -1.0 : 1.0;
+    	rightDirection = position < 0 ? -1.0 : 1.0;
+    	leftDirection = position < 0 ? -1.0 : 1.0;
     	
     }
     
@@ -75,11 +78,11 @@ public class AutoDrive extends Command {
     	super();
     	initProperties();
     	
-    	leftGoal = left * valeur_de_un * leftRatio;
-    	rightGoal = right * valeur_de_un * rightRatio;
+    	leftGoal = left;
+    	rightGoal = right;
     	
-    	directionDroite = right < 0 ? -1.0 : 1.0;
-    	directionGauche = left < 0 ? -1.0 : 1.0;
+    	rightDirection = right < 0 ? -1.0 : 1.0;
+    	leftDirection = left < 0 ? -1.0 : 1.0;
     	
     	// Pour faire un mouvement circulaire, la roue exterieur doit faire plus de tour que celle interieur
     	
@@ -90,11 +93,14 @@ public class AutoDrive extends Command {
     			vitesseMaximumGauche = .6;
     		}
     	}*/
+    	dt.resetEncoders();
     }
 
     private void initProperties() {
     	requires (Robot.driveTrain);
     	dt = Robot.driveTrain;
+    	
+    	System.out.println("Initialization Autodrives");
     	
     }
     
@@ -137,6 +143,10 @@ public class AutoDrive extends Command {
     double erreurDroitePrec = 0;
     double erreurGauchePrec = 0;
     
+    double kp = 1.0/8192.0;
+    double erreurDroiteAbs;
+    double erreurGaucheAbs;
+    
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	
@@ -144,8 +154,8 @@ public class AutoDrive extends Command {
     	erreurDroite = rightGoal -  dt.getRightWheelPosition();
     	erreurGauche = leftGoal -  dt.getLeftWheelPosition();
     	
-    	double erreurDroiteAbs = Math.abs(erreurDroite);
-    	double erreurGaucheAbs = Math.abs(erreurGauche);
+    	erreurDroiteAbs = Math.abs(erreurDroite);
+    	erreurGaucheAbs = Math.abs(erreurGauche);
     	
 //    	if (hasStarted > 10) {
 //	    	if (erreurDroite > erreurDroitePrec) {
@@ -161,55 +171,94 @@ public class AutoDrive extends Command {
     	// Si on a atteind lobjectif on stop!
     	if(erreurDroiteAbs <= tolerance)
     	{	
-    		vitesseDroite = 0;
+    		rightSpeed = 0;
     		//dt.roueDroite.enableBrakeMode(true);
     	}else{
-	    	// Si on s'approche de l'objectif on ralentit
-	    	if (erreurDroite < 0 ) {
-	    		vitesseDroite = vitesseDroite - (0.1 * directionDroite);
-	    		
-	    		if (Math.abs(vitesseDroite) <= vitesseMinimum) {
-	    			vitesseDroite = vitesseMinimum * directionDroite;
-	    		}
-	    		
+	    	if (rightDirection > 0) {
+	    		rightSpeed = minimumSpeed;
 	    	} else {
-	    		vitesseDroite = vitesseDroite + (0.005 * directionDroite);
-	    		
-	    		if (Math.abs(vitesseDroite) >= vitesseMaximumDroite) {
-	    			vitesseDroite = vitesseMaximumDroite * directionDroite;
-	    		}
-	
+	    		rightSpeed = -minimumSpeed;
 	    	}
+	    	
+	    	
+	    	if (erreurDroiteAbs <= 8192) {
+	    		rightSpeed = rightSpeed * .75;
+	    	}
+	    	
+    			
+    		
+    			
+//	    	if (erreurDroite < 0 ) {
+//	    		
+//	    		vitesseDroite = vitesseDroite - (0.1 * directionDroite);
+//	    		
+//	    		//vitesseDroite = vitesseDroite + (1 * directionDroite);
+//	    		
+//	    		if (Math.abs(vitesseDroite) <= vitesseMinimum) {
+//	    			vitesseDroite = vitesseMinimum * directionDroite;
+//	    		}else if (Math.abs(vitesseDroite) >= vitesseMaximumDroite) {
+//	    			vitesseDroite = vitesseMaximumDroite * directionDroite;
+//	    		}
+//	    		
+//	    	} else {
+//	    		vitesseDroite = vitesseDroite + (0.1 * directionDroite);
+//	    		
+//	    		//vitesseDroite = vitesseDroite + (1 * directionDroite);
+//	    		
+//	    		if (Math.abs(vitesseDroite) <= vitesseMinimum) {
+//	    			vitesseDroite = vitesseMinimum * directionDroite;
+//	    		}else if (Math.abs(vitesseDroite) >= vitesseMaximumDroite) {
+//	    			vitesseDroite = vitesseMaximumDroite * directionDroite;
+//	    		}
+//	
+//	    	}
     	}
     	
 
+
     	if(erreurGaucheAbs <= tolerance)
     	{
-    		vitesseGauche = 0;
+    		leftSpeed = 0;
     		//dt.roueGauche.enableBrakeMode(true);
     	}else{
-	    	if (erreurGauche < 0 ) {
-	    		vitesseGauche = vitesseGauche - (0.1 * directionGauche);
-	    		
-	    		if (Math.abs(vitesseGauche) <= vitesseMinimum) {
-	    			vitesseGauche = vitesseMinimum * directionGauche;
-	    		}
-	    		
+	    	if (leftDirection > 0) {
+	    		leftSpeed = minimumSpeed;	
 	    	} else {
-	    		vitesseGauche = vitesseGauche + (0.005 * directionGauche);
-	    		
-	    		if (Math.abs(vitesseGauche) >= vitesseMaximumGauche) {
-	    			vitesseGauche = vitesseMaximumGauche * directionGauche;
-	    		}
-	
+	    		leftSpeed = -minimumSpeed;
 	    	}
+	    	
+	    	if (erreurGaucheAbs <= 8192) {
+	    		leftSpeed = leftSpeed * .75;
+	    	}
+    		
+    	
+//	    	if (erreurGauche < 0 ) {
+//	    		vitesseGauche = vitesseGauche - (0.1 * directionGauche);
+//	    		
+//	    		if (Math.abs(vitesseGauche) <= vitesseMinimum) {
+//	    			vitesseGauche = vitesseMinimum * directionGauche;
+//	    		}else if (Math.abs(vitesseGauche) >= vitesseMaximumGauche) {
+//	    			vitesseGauche = vitesseMaximumGauche * directionGauche;
+//	    		}
+//	    		
+//	    	} else {
+//	    		vitesseGauche = vitesseGauche + (0.1 * directionGauche);
+//	    		
+//	    		if (Math.abs(vitesseGauche) <= vitesseMinimum) {
+//	    			vitesseGauche = vitesseMinimum * directionGauche;
+//	    		}else if (Math.abs(vitesseGauche) >= vitesseMaximumGauche) {
+//	    			vitesseGauche = vitesseMaximumGauche * directionGauche;
+//	    		}
+//	
+//	    	}
     	}
     	
-    	dt.wheelRight.set(vitesseDroite);
-    	dt.wheelLeft.set(-vitesseGauche);
+    	//dt.wheelRight.set(-rightSpeed * rightRatio);
+    	dt.setRightSpeed(rightSpeed);																																
+    	dt.wheelLeft.set(leftSpeed * leftRatio);						
     	
     	
-    	erreurDroitePrec = erreurDroite;
+    	erreurDroitePrec = erreurDroite;																			
     	erreurGauchePrec = erreurGauche;
     	
     	hasStarted++;
@@ -220,6 +269,16 @@ public class AutoDrive extends Command {
 		System.out.print("Erreur G : " + erreurGauche);
 		System.out.println("\tErreur D : " + erreurDroite);
     	*/
+    	
+    	SmartDashboard.putNumber("Right speed", rightSpeed);
+    	SmartDashboard.putNumber("Right error", erreurDroite);
+    	SmartDashboard.putNumber("Right Goal", rightGoal);
+    	SmartDashboard.putNumber("Right direction", rightDirection);
+    	
+    	SmartDashboard.putNumber("Left speed", leftSpeed);
+    	SmartDashboard.putNumber("Left error", erreurGauche);
+    	SmartDashboard.putNumber("Left goal", leftGoal);
+    	
     }
     
 
@@ -254,7 +313,7 @@ public class AutoDrive extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    System.out.println("FOOOOOOOOOO*******************************");
+    	System.out.println("FOOOOOOOOOO*******************************");
     }
     
     /**
@@ -276,8 +335,8 @@ public class AutoDrive extends Command {
     	if (loopCounter++ > loopLimit) {
     		loopCounter = 0;
     		
-    		System.out.print("Vit G : " + vitesseGauche);
-    		System.out.println("\tVit D : " + vitesseDroite);
+    		System.out.print("Vit G : " + leftSpeed);
+    		System.out.println("\tVit D : " + rightSpeed);
     		
     		System.out.print("Roue G pos : " + dt.wheelLeft.getSensorCollection().getQuadraturePosition());
     		System.out.println("\tRoue D pos : " + dt.wheelRight.getSensorCollection().getQuadraturePosition());

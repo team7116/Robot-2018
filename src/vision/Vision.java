@@ -35,7 +35,7 @@ public class Vision implements Runnable {
 	public int hueMin = 15;
 	public int hueMax = 35;
 	public int satMin = 60;
-	public int satMax = 170;
+	public int satMax = 220;
 	public int volMin = 130;
 	public int volMax = 250;
 	
@@ -99,6 +99,8 @@ public class Vision implements Runnable {
 			        Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new  Size(2*erosion_size + 1, 2*erosion_size+1));
 					
 					Imgproc.erode(output, output, element);
+					
+					Core.rotate(output, output, Core.ROTATE_180);
 					
 					blobs.clear();
 					
