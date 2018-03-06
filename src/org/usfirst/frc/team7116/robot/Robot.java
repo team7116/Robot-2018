@@ -18,7 +18,6 @@ import vision.Vision;
 import org.usfirst.frc.team7116.robot.commands.AutonomousCommands;
 import org.usfirst.frc.team7116.robot.commands.DriveWithJoystick;
 import org.usfirst.frc.team7116.robot.subsystems.DriveTrain;
-import org.usfirst.frc.team7116.robot.subsystems.MoteurSimple;
 import org.usfirst.frc.team7116.robot.subsystems.Pince;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -40,7 +39,6 @@ public class Robot extends TimedRobot {
 	
 	public static OI m_oi;
 	public static final DriveTrain driveTrain = new DriveTrain();
-	public static final MoteurSimple moteur = new MoteurSimple();
 	public static final Pince pince = new Pince();
 
 	Compressor c = new Compressor(0);

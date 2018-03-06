@@ -151,24 +151,24 @@ public class AutoDrive extends Command {
     }
 
     private void reset(){
-    	erreurDroite = 0;
-    	erreurGauche = 0;
+    	rightError = 0;
+    	leftError = 0;
     	    
-    	erreurDroitePrec = 0;
-    	erreurGauchePrec = 0;
+    	rightErrorPrevious = 0;
+    	leftErrorPrevious = 0;
     	dt.wheelLeft.getSensorCollection().setQuadraturePosition(0, RobotMap.kTimeoutMs);
     	dt.wheelRight.getSensorCollection().setQuadraturePosition(0, RobotMap.kTimeoutMs);;
     }
     
-    double erreurDroite = 0;
-    double erreurGauche = 0;
+    double rightError = 0;
+    double leftError = 0;
     
-    double erreurDroitePrec = 0;
-    double erreurGauchePrec = 0;
+    double rightErrorPrevious = 0;
+    double leftErrorPrevious = 0;
     
     double kp = 1.0/8192.0;
-    double erreurDroiteAbs;
-    double erreurGaucheAbs;
+    double rightErrorAbs;
+    double leftErrorAbs;
     
     double rightPos;
     double leftPos;
@@ -191,26 +191,45 @@ public class AutoDrive extends Command {
     	leftPos = dt.getLeftWheelPosition();
     	
     	// Calcul de l'erreur entre l'objectif et la position actuelle
-    	erreurDroite = rightGoal -  rightPos;
-    	erreurGauche = leftGoal -  leftPos;
+    	rightError = rightGoal -  rightPos;
+    	leftError = leftGoal -  leftPos;
     	
-    	rightDirCurrent = erreurDroite >= 0 ? 1 : -1;
-    	leftDirCurrent = erreurGauche >= 0 ? 1 : -1;
+    	rightDirCurrent = rightError >= 0 ? 1 : -1;
+    	leftDirCurrent = leftError >= 0 ? 1 : -1;
     	
-    	erreurDroiteAbs = Math.abs(erreurDroite);
-    	erreurGaucheAbs = Math.abs(erreurGauche);
+    	rightErrorAbs = Math.abs(rightError);
+    	leftErrorAbs = Math.abs(leftError);
     	
     	
     	// Si on a atteind lobjectif on stop!
-    	if(erreurDroiteAbs <= tolerance && !rightDone)
+    	if(rightErrorAbs <= tolerance && !rightDone)
     	{	
     		rightSpeed = 0;
     		rightDone = true;
     	}else{
+    		// Kind of working
     		rightSpeed = minimumSpeed * rightDirCurrent;
+    		
+//    		if (rightPos < TWO_ROTATIONS) {
+//    			rightSpeed = rightSpeed + (maximumSpeed / TWO_ROTATIONS) * 10;
+//    		} else if (rightPos > (rightGoal - TWO_ROTATIONS)) {
+//    			rightSpeed = rightSpeed - (maximumSpeed / TWO_ROTATIONS) * 10;
+//    			
+//    		} else {
+//    			rightSpeed = maximumSpeed;
+//    		}
+//    		
+//
+//			if (rightSpeed >= maximumSpeed) {
+//    			rightSpeed = maximumSpeed;
+//    		}
+    		
+    		
+    		
+    		
     	}
     	
-    	if(erreurGaucheAbs <= tolerance && !leftDone)
+    	if(leftErrorAbs <= tolerance && !leftDone)
     	{
     		leftSpeed = 0;
     		leftDone = true;
@@ -222,21 +241,21 @@ public class AutoDrive extends Command {
     	dt.setRightSpeed(rightSpeed);
     	dt.setLeftSpeed(leftSpeed);						
     	
-    	erreurDroitePrec = erreurDroite;																			
-    	erreurGauchePrec = erreurGauche;
+    	rightErrorPrevious = rightError;																			
+    	leftErrorPrevious = leftError;
     	
     	hasStarted++;
 
     	if (hasStarted % 10 == 0) {
 	    	SmartDashboard.putNumber("Right speed", rightSpeed);
-	    	SmartDashboard.putNumber("Right error", erreurDroite);
-	    	SmartDashboard.putNumber("Right error abs", erreurDroiteAbs);
+	    	SmartDashboard.putNumber("Right error", rightError);
+	    	SmartDashboard.putNumber("Right error abs", rightErrorAbs);
 	    	SmartDashboard.putNumber("Right Goal", rightGoal);
 	    	SmartDashboard.putBoolean("Right isDone", rightDone);
 			SmartDashboard.putNumber("Right pos", rightPos);
 	    	
 	    	SmartDashboard.putNumber("Left speed", leftSpeed);
-	    	SmartDashboard.putNumber("Left error", erreurGauche);
+	    	SmartDashboard.putNumber("Left error", leftError);
 	    	SmartDashboard.putNumber("Left goal", leftGoal);
 	    	SmartDashboard.putBoolean("Left isDone", leftDone);
 	    	SmartDashboard.putNumber("Left pos", leftPos);
@@ -302,8 +321,8 @@ public class AutoDrive extends Command {
     		System.out.print("Roue G pos : " + dt.wheelLeft.getSensorCollection().getQuadraturePosition());
     		System.out.println("\tRoue D pos : " + dt.wheelRight.getSensorCollection().getQuadraturePosition());
     		
-    		System.out.print("Erreur G : " + erreurGauche);
-    		System.out.println("\tErreur D : " + erreurDroite);
+    		System.out.print("Erreur G : " + leftError);
+    		System.out.println("\tErreur D : " + rightError);
     		
 //    		System.out.print("Roue G spd : " + dt.roueGauche.getSpeed());
 //    		System.out.println("Roue D spd : " + dt.roueDroite.getSpeed());

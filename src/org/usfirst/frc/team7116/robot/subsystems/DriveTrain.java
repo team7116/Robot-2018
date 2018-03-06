@@ -89,18 +89,19 @@ public class DriveTrain extends Subsystem {
 	
 		drive = new DifferentialDrive(wheelLeft, wheelRight);
 		
-//		dios = new ArrayList<DigitalInput>();
-//		
-//		for (int i = 0; i < 10; i++) {
-//			DigitalInput current = new DigitalInput(i);
-//			
-//			dios.add(current);
-//		}
-//		
+		dios = new ArrayList<DigitalInput>();
+		
+		for (int i = 0; i < 10; i++) {
+			DigitalInput current = new DigitalInput(i);
+			
+			dios.add(current);
+		}
+		
 		// Src : http://www.ctr-electronics.com/downloads/api/cpp/html/classctre_1_1phoenix_1_1motorcontrol_1_1can_1_1_talon_s_r_x.html#a2b15046cefe6828a27409584077c7397
 		wheelLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, RobotMap.kTimeoutMs);
 		wheelRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, RobotMap.kTimeoutMs);
 		
+		// Limitation des peaks de courant
 		wheelLeft.configContinuousCurrentLimit(RobotMap.kCurrentLimit, RobotMap.kTimeoutMs);
 		wheelLeft.configPeakCurrentDuration(0, RobotMap.kTimeoutMs);
 		wheelLeft.enableCurrentLimit(true);
@@ -110,12 +111,12 @@ public class DriveTrain extends Subsystem {
 		wheelRight.enableCurrentLimit(true);
 		
 		// Before G18
-		wheelRight.setInverted(true);
+		//wheelRight.setInverted(true);
 		//wheelLeft.setInverted(true);
 		
 		// Inversion des encodeurs
 		//wheelLeft.setSensorPhase(false);
-		//wheelRight.setSensorPhase(true);
+		
 		
 		resetEncoders();
 
@@ -123,7 +124,6 @@ public class DriveTrain extends Subsystem {
 		wheelLeft.setSafetyEnabled(false);
 		wheelRight.setSafetyEnabled(false);
 		
-		//wheelRight.config_kP(10, 0, RobotMap.kTimeoutMs);
 		
 		wheelRight.valueUpdated();
 		wheelLeft.valueUpdated();
@@ -157,7 +157,7 @@ public class DriveTrain extends Subsystem {
 		if (stick.getBackButtonReleased()) {
 			setJoystick();
 		}
-		
+				
 		msgAcc += Robot.dT;
 		
 		double yAxis = -stick.getTriggerAxis(Hand.kLeft) + stick.getTriggerAxis(Hand.kRight);
@@ -200,6 +200,10 @@ public class DriveTrain extends Subsystem {
     		driveConfig = JoyConfig.kTriggers;
     		break;
     	}
+	}
+	
+	private void debug() {
+		
 	}
 	
 	public void stop() {

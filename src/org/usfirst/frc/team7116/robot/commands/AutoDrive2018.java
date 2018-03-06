@@ -29,8 +29,7 @@ public class AutoDrive2018 extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	
-    	dt.setPosition(leftGoal, rightGoal);
+
     	
     }
 
