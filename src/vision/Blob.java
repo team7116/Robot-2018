@@ -1,13 +1,13 @@
 package vision;
 
-public class blob {
+public class Blob {
 	
 	float minx, miny, maxx, maxy;
 	float distThreshold = 80;
 	
 	boolean intrest = false;
 	
-	blob(float x, float y){
+	Blob(float x, float y){
 		minx = x;
 		miny = y;
 		maxx = x;

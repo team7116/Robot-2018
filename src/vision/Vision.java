@@ -67,12 +67,12 @@ public class Vision implements Runnable {
 		
 		CvSink sinkFront = CameraServer.getInstance().getVideo(camFront);
 		//CvSink sinkRear =  CameraServer.getInstance().getVideo(camRear);
-		//CvSink cvSink2 = CameraServer.getInstance().getVideo(camera2);
+		//      CvSink cvSink2 = CameraServer.getInstance().getVideo(camera2);
 		
-		int intrestX = 0;
-		int intrestY = height/2;
+		int width = 320;
+		int height = 240;
 		
-		CvSource outputStream = camServer.putVideo("openCV", 160, 120);
+		CvSource outputStream = camServer.putVideo("openCV", width, height);
 		
 		sinkFront.setEnabled(true);
 		//sinkRear.setEnabled(true);
@@ -80,40 +80,45 @@ public class Vision implements Runnable {
 		Mat image = new Mat();
 		Mat output = new Mat();
 		
-		SmartDashboard.putNumber("minHue", hueMin);
+		Mat imgSmall = null;
+		Size smallSize = new Size (160, 120);
+
+		int hueMin = 20;
+		int hueMax = 35;
+		int satMin = 30;
+		int satMax = 125;
+		int volMin = 150;
+		int volMax = 240;
 		
-		ArrayList<blob> blobs = new ArrayList<>();
+		ArrayList<Blob> blobs = new ArrayList<>();
 		
 		while(true) {
 			try {
 				sinkFront.grabFrame(image);
 				
-				if(image.channels() == 3 && is_enabled) {
+				if(image.channels() == 3) {
 					
-					
+					//Imgproc.threshold(image, output, 127, 255, Imgproc.THRESH_BINARY);
+					//SmartDashboard.putNumber("OpenCV", image.channels());
 					Imgproc.cvtColor(image, output, Imgproc.COLOR_BGR2HSV);
+					//org.opencv.imgproc.Imgproc.rectangle(output, point1, point2, new Scalar(255, 255, 255));
 					Core.inRange(output, new Scalar(hueMin, satMin, volMin), new Scalar(hueMax, satMax, volMax), output);
 					
-					int erosion_size = 3;
-			        
-			        Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new  Size(2*erosion_size + 1, 2*erosion_size+1));
 					
-					Imgproc.erode(output, output, element);
-					
-					Core.rotate(output, output, Core.ROTATE_180);
 					
 					blobs.clear();
 					
-					float threshold = 250;
+					float threshold = 80;
 					
-					for(int x = intrestX; x < width - intrestX; x++) {
-						for(int y = intrestY; y < height; y++) {
+					for(int x = 0; x < width; x++) {
+						for(int y = 0; y < height; y++) {
 							
-							double[] colour = output.get(y, x);
+							double[] colour = output.get(x, y);
 							
 							double currentHue;
-							
 							if(colour != null) {
+								
+								SmartDashboard.getNumber("Colour Size", colour.length);
 								
 								currentHue = colour[0];
 								
@@ -122,7 +127,7 @@ public class Vision implements Runnable {
 								if(d < threshold*threshold) {
 									
 									boolean found = false;
-									for(blob b : blobs) {
+									for(Blob b : blobs) {
 										if(b.isNear((float)x, (float)y)){
 											b.add((float)x, (float)y);
 											found = true;
@@ -131,7 +136,7 @@ public class Vision implements Runnable {
 									}
 									
 									if(!found) {
-										blob b = new blob((float)x, (float)y);
+										Blob b = new Blob((float)x, (float)y);
 										blobs.add(b);
 									}
 									
@@ -142,57 +147,23 @@ public class Vision implements Runnable {
 						}
 					}
 					
+					/*
 					
-					SmartDashboard.putNumber("Blob Array Size", blobs.size());
-					
-					
-					//=====Center Finder=====\\
-					
-					closestCenter = 1000;
-					
-					int centerIndex = -1;
-					
-					for(int i = 0; i < blobs.size(); i++){
-						
-						blob part = blobs.get(i);
-						
-						part.set_intrest(false);
-						
-						if(Math.abs(width/2 - part.get_center_x()) < closestCenter){
-							centerIndex = i;
-							closestCenter = Math.abs(width/2 - part.get_center_x());
-							centerX = part.get_center_x();
-						}
-						
-					}
-					
-					if(centerIndex != -1){
-						blob part = blobs.get(centerIndex);
-						part.set_intrest(true);
-					}
-					
-					
-					//======Blob draw=====\\
-					
-					for(blob b : blobs) {
-						
+					for(Blob b : blobs) {
 						float x1 = b.get_minx();
 						float y1 = b.get_miny();
 						float x2 = b.get_maxx();
 						float y2 = b.get_maxy();
 						
+						Point point1 = new Point(x1, y1);
+						Point point2 = new Point(x2, y2);
+
+						org.opencv.imgproc.Imgproc.rectangle(output, point1, point2, new Scalar(255, 255, 255, 100));
 						
-						Point point1 = new Point((double)x1, (double)y1);
-						Point point2 = new Point((double)x2, (double)y2);
-						
-						if(b.is_intrest()){
-							Imgproc.rectangle(output, point1, point2, new Scalar(255));
-						}
 						
 					}
 					
-					SmartDashboard.putNumber("Box Center", centerX);
-					
+					*/
 					
 					outputStream.putFrame (output);
 					
@@ -216,7 +187,7 @@ public class Vision implements Runnable {
 	float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
 		return (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1);
 	}
-	
+
 	
 	void stopCamServer() {
 		SmartDashboard.putString("Message", "Stopping camera server");
