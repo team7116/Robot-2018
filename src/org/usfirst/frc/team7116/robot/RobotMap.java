@@ -34,7 +34,7 @@ public class RobotMap {
 	
 
 	public enum JoyConfig {
-	    kleftStickOnly, kTriggers, kBothSticks,
+	    kTriggers, kBothSticks,kleftStickOnly;
 	    
 
   }

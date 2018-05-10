@@ -83,12 +83,12 @@ public class Vision implements Runnable {
 		Mat imgSmall = null;
 		Size smallSize = new Size (160, 120);
 
-		int hueMin = 20;
+		int hueMin = 21;
 		int hueMax = 35;
-		int satMin = 30;
-		int satMax = 125;
-		int volMin = 150;
-		int volMax = 240;
+		int satMin = 106;
+		int satMax = 228;
+		int volMin = 126;
+		int volMax = 227;
 		
 		ArrayList<Blob> blobs = new ArrayList<>();
 		

@@ -40,8 +40,9 @@ public class OI {
 		//buttonX.whenPressed(new AutoDrive(16192, 16192));
 		
 		buttonX.whileHeld(new DriveAutoCubeTracking());
-		buttonY.whenPressed(new toggleVision());
-			
+		buttonY.whileHeld(new toggleVision());
+		
+		
 		//Commandes pour ouvrir et fermer la pince pneumatique (ports 1 et 2)
 		buttonLB.whenPressed(new PinceOuvrir());
 		buttonRB.whenPressed(new PinceFermer());

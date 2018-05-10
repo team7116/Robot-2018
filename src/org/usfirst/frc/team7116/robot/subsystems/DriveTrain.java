@@ -73,7 +73,14 @@ public class DriveTrain extends Subsystem {
 	public double XFactor = 0.6;
 	public double XThreshold = 0.9;
 	
+	public boolean fastMode = false;
+	public double fastFactor = 0.65;
+	
 	public SensorCollection lwSensors;
+	
+	public void tglSpeed(){
+		fastMode = !fastMode;
+	}
 
 	
 	public void initDefaultCommand() {
@@ -150,18 +157,27 @@ public class DriveTrain extends Subsystem {
 		
 	}
 		
-	public static JoyConfig driveConfig = RobotMap.JoyConfig.kTriggers;
+	public static JoyConfig driveConfig = RobotMap.JoyConfig.kleftStickOnly;
 	
 	public void drive(XboxController stick){
 		
+		SmartDashboard.putBoolean("Fast Mode Status", fastMode);
+		
 		if (stick.getBackButtonReleased()) {
-			setJoystick();
+			//setJoystick();
 		}
 				
 		msgAcc += Robot.dT;
 		
 		double yAxis = -stick.getTriggerAxis(Hand.kLeft) + stick.getTriggerAxis(Hand.kRight);
 		double xAxis = remapx(stick.getX(Hand.kLeft));
+		
+		double finalFactor;
+		if(fastMode){
+			finalFactor = 1;
+		}else {
+			finalFactor = fastFactor;
+		}
 
 		switch(driveConfig){
 		case kTriggers:
@@ -179,7 +195,7 @@ public class DriveTrain extends Subsystem {
 			break;
 		}
 		
-		drive.arcadeDrive(yAxis, xAxis);
+		drive.arcadeDrive(yAxis * finalFactor, xAxis * finalFactor);
 		
 		if (msgAcc >= msgInt) {
 			msgAcc = 0;
